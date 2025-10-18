@@ -1,95 +1,47 @@
-# name: Publish Docker Image
-
-# on:
-#     push:
-#         branches:
-#             - master
-# jobs:
-#   deliveryToDocker:
-#        name: Push to Docker Hub
-#        runs-on: ubuntu-latest
-#        steps:
-#          - name: Checkout
-#            uses: actions/checkout@v4
-
-#          - name: Login to Docker Hub
-#            uses: docker/login-action@v3
-#            with:
-#              username: ${{secrets.DOCKERHUB_USERNAME}}
-#              password: ${{secrets.DOCKERHUB_PASSWORD}}
-
-#          - name: Extract meta data
-#            id: meta
-#            uses: docker/metadata-action@v4
-#            with:
-#                images: rajib700/cicd
-
-#          - name: Build and Push
-#            uses: docker/build-push-action@v4
-#            with:
-#              context: .
-#              file: ./Dockerfile
-#              push: true
-#              tags: ${{steps.meta.outputs.tags}}
-
 name: Publish Docker Image
 
 on:
-  push:
-    branches:
-      - master   # Run workflow when pushing to master
-
+    push:
+        branches:
+            - master
 jobs:
   deliveryToDocker:
-    name: Build & Push Docker Image to Docker Hub
-    runs-on: ubuntu-latest
+       name: Push to Docker Hub
+       runs-on: ubuntu-latest
 
-    steps:
-      # 1️⃣ Checkout repository
-      - name: Checkout code
-        uses: actions/checkout@v4
+       steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
 
-      # 2️⃣ Set up Node.js (optional — if you need to build before Docker)
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+        - name: Log in to Docker Hub
+          run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      # 3️⃣ Install dependencies and build Vite app (optional)
-      - name: Install dependencies
-        run: npm ci
+        - name: Build Docker image
+          run: docker build . -t rajib700/react-testing:latest
 
-      - name: Build project
-        run: npm run build
+        - name: Push Docker image
+          run: docker push rajib700/react-testing:latest
+          
+    #    steps:
+    #      - name: Checkout
+    #        uses: actions/checkout@v4
 
-      # 4️⃣ Log in to Docker Hub
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    #      - name: Login to Docker Hub
+    #        uses: docker/login-action@v3
+    #        with:
+    #          username: ${{ secrets.DOCKERHUB_USERNAME }}
+    #          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      # 5️⃣ Extract metadata for tags and labels
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: rajib700/cicd
-          tags: |
-            type=ref,event=branch
-            type=sha
-            type=raw,value=latest
+    #      - name: Extract meta data
+    #        id: meta
+    #        uses: docker/metadata-action@v4
+    #        with:
+    #            images: rajib700/cicd
 
-      # 6️⃣ Build and push Docker image
-      - name: Build and Push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      # 7️⃣ Confirmation message
-      - name: Success Message
-        run: echo "✅ Docker image built and pushed successfully!"
+    #      - name: Build and Push
+    #        uses: docker/build-push-action@v4
+    #        with:
+    #          context: .
+    #          file: ./Dockerfile
+    #          push: true
+    #          tags: ${{steps.meta.outputs.tags}}
