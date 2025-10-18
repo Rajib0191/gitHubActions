@@ -17,11 +17,10 @@ jobs:
           run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
         - name: Build Docker image
-          run: docker build . -t rajib700/react-testing:latest
+          run: docker build . -t rajib700/cicd:latest
 
         - name: Push Docker image
-          run: docker push rajib700/react-testing:latest
-          
+          run: docker push rajib700/cicd:latest
     #    steps:
     #      - name: Checkout
     #        uses: actions/checkout@v4
