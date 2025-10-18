@@ -24,6 +24,6 @@ jobs:
         run: npm ci
 
       - name: Run Test
-        run: run test
+        run: npm test
 
       - run: echo "All tests passed!"
