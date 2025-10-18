@@ -1,0 +1,35 @@
+name: Testing Workflow
+
+on:
+    push:
+        branches:
+          - master
+
+jobs:
+  demo-jobs:  #This is the name of the jobs. you can name it anything.
+       runs-on: ubuntu-latest  #Runner environment (virtual machine).
+       steps:
+        - run: echo "Action started"
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Run one line script
+          run: echo "Hello World"
+
+        - name: Run multiline script
+          run: |
+              echo Add another action to build
+              echo test, and deploy your project.
+
+        - name: List files
+          run: ls ${{github.workspace}}
+
+        - name: Print GitHub Context
+          env:
+                GITHUB_CONTEXT: ${{toJson(github)}}
+          run: echo "$GITHUB_CONTEXT"
+
+        - name: Action Completed
+          run: echo "Action Completed"
+
+       
